@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<vector>
+#include<string.h>
+
+using namespace std;
+
+vector<int>missiles;
+
+int memo[10000][33000];
+
+int intercept(int index,int before,int count){
+	
+	if(memo[index][count] != -1) return memo[index][count];
+	
+	int sum = count;
+	if(index >= missiles.size()) return sum;
+	
+	for(int i=index;i<missiles.size();i++){
+		
+		if(before < missiles[i] && before != -1) continue;
+		int res = intercept(i+1,missiles[i],count + 1);
+		
+		if(res > count + (missiles.size() - i)) break;
+		if(sum < res) sum = res;
+		
+	}
+	
+	memo[index][count] = sum;
+	
+	return sum;
+}
+
+int main(){
+	
+	int input;
+	int testCount = 1;
+	int temp;
+	memset(memo,-1,sizeof(memo));
+	
+	while(scanf("%d",&input) != EOF){
+		
+		if(input == -1){
+			
+			if(temp == -1) break;
+			
+			int res = intercept(0,-1,0);
+			
+			if(testCount != 1) printf("\n");
+			
+			printf("Test #%d:\n",testCount);
+			printf("  maximum possible interceptions: %d\n",res);
+			testCount++;
+			
+			memset(memo,-1,sizeof(memo));
+			missiles.clear();
+		}
+		else{
+			missiles.push_back(input);                  
+		}
+		
+		temp = input;
+	}	
+	
+	return 0;
+}
